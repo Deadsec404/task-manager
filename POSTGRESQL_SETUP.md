@@ -34,14 +34,23 @@ After installation, CapRover will provide connection details. You can also find 
 3. Look for connection details or check the app logs
 
 **Connection format:**
+
+For internal CapRover networking (recommended for apps on same CapRover):
 ```
 postgresql://postgres:PASSWORD@srv-captain--postgres:5432/postgres
 ```
 
-Or if connecting from outside CapRover (from your main app):
+Example (your actual connection string):
+```
+postgresql://postgres:f0b3b4d8d29e8666@srv-captain--postgres:5432/postgres
+```
+
+Or if connecting from outside CapRover (external access):
 ```
 postgresql://postgres:PASSWORD@postgres.captain.yourdomain.com:5432/postgres
 ```
+
+**Note:** The `srv-captain--postgres` format is the internal service name that CapRover uses for inter-container communication. This is the recommended format when your app and PostgreSQL are both on CapRover.
 
 ## Step 3: Update Prisma Schema for PostgreSQL
 

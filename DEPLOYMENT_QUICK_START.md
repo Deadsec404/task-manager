@@ -33,11 +33,17 @@ FRONTEND_URL=https://task-management.captain.yourdomain.com
 ```env
 NODE_ENV=production
 PORT=80
-DATABASE_URL=postgresql://postgres:PASSWORD@postgres.captain.yourdomain.com:5432/postgres
+DATABASE_URL=postgresql://postgres:PASSWORD@srv-captain--postgres:5432/postgres
 JWT_SECRET=<generate-secure-32-char-secret>
 JWT_EXPIRES_IN=7d
 FRONTEND_URL=https://task-management.captain.yourdomain.com
 ```
+
+**Example with your actual PostgreSQL URL:**
+```env
+DATABASE_URL=postgresql://postgres:f0b3b4d8d29e8666@srv-captain--postgres:5432/postgres
+```
+
 See [POSTGRESQL_SETUP.md](./POSTGRESQL_SETUP.md) for detailed PostgreSQL setup.
 
 **Generate JWT_SECRET:**

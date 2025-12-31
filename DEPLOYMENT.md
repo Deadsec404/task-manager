@@ -277,9 +277,14 @@ PostgreSQL is recommended for production deployments as it provides better perfo
    ```env
    DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@postgres.captain.yourdomain.com:5432/postgres
    ```
-   For internal CapRover networking, use:
+   For internal CapRover networking (recommended when both apps are on CapRover), use:
    ```env
    DATABASE_URL=postgresql://postgres:PASSWORD@srv-captain--postgres:5432/postgres
+   ```
+   
+   **Example with actual PostgreSQL URL:**
+   ```env
+   DATABASE_URL=postgresql://postgres:f0b3b4d8d29e8666@srv-captain--postgres:5432/postgres
    ```
 
 4. **Deploy and Initialize:**
