@@ -9,10 +9,16 @@
 ### Step 2: Deploy in CapRover
 1. Login to CapRover dashboard
 2. Create new app (e.g., `task-management`)
-3. Go to **Deployment** tab → **Method 2: Deploy from GitHub/Bitbucket/GitLab**
-4. Connect your repository
+3. Go to **Deployment** tab → **Method 1: Deploy from a GitHub/Bitbucket/GitLab repository or a self-hosted git server**
+4. For Azure DevOps, enter repository URL with PAT:
+   ```
+   https://[PAT]@dev.azure.com/TechMorpho/Task-Managemnet-System/_git/Task-Managemnet-System
+   ```
+   (Replace `[PAT]` with your Personal Access Token)
 5. Select branch (usually `main`)
 6. Click **Connect**
+
+**To create a PAT:** Azure DevOps → Profile → Personal access tokens → New Token (scope: Code Read)
 
 ### Step 3: Set Environment Variables
 Go to **App Configs** tab → **Environment Variables**:

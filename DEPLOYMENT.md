@@ -19,7 +19,7 @@ CapRover is a self-hosted PaaS that makes it easy to deploy applications using D
 
 - CapRover instance running and accessible
 - Domain name configured with CapRover
-- Git repository with your code (GitHub, GitLab, or Bitbucket)
+- Git repository with your code (GitHub, GitLab, Bitbucket, or Azure DevOps)
 
 ### Step 1: Prepare Your Repository
 
@@ -41,7 +41,34 @@ Make sure your repository contains:
    - Click "Create New App"
 
 3. **Connect Your Repository**
+
+   **For Azure DevOps:**
    - In your app settings, go to "Deployment" tab
+   - Select "Method 1: Deploy from a GitHub/Bitbucket/GitLab repository or a self-hosted git server"
+   - Enter your Azure DevOps repository URL in the format:
+     ```
+     https://[PAT]@dev.azure.com/[organization]/[project]/_git/[repository]
+     ```
+   - Example:
+     ```
+     https://[PAT]@dev.azure.com/TechMorpho/Task-Managemnet-System/_git/Task-Managemnet-System
+     ```
+   - Replace `[PAT]` with a Personal Access Token (PAT) from Azure DevOps
+   - Choose branch: `main` (or your default branch)
+   - Click "Connect"
+   
+   **Creating a Personal Access Token (PAT) in Azure DevOps:**
+   1. Go to Azure DevOps: https://dev.azure.com
+   2. Click on your profile icon (top right) → "Personal access tokens"
+   3. Click "New Token"
+   4. Set name: "CapRover Deployment"
+   5. Set expiration (recommended: 90 days or custom)
+   6. Select scope: "Code (read)" - this is sufficient for deployment
+   7. Click "Create"
+   8. Copy the token immediately (you won't see it again)
+   9. Use this token in the repository URL above
+   
+   **For GitHub/Bitbucket/GitLab (Alternative):**
    - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
    - Click "Connect Repository"
    - Authenticate with your Git provider
