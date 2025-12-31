@@ -1,6 +1,6 @@
 # Deployment Instructions
 
-This project can be deployed to **CapRover** and integrated with **Azure DevOps** for CI/CD.
+This project can be deployed to **CapRover** using GitHub, GitLab, or Bitbucket.
 
 ## 📋 Quick Links
 
@@ -26,21 +26,6 @@ CapRover is a self-hosted PaaS platform that makes deployment easy.
 6. Initialize database after first deployment
 
 **Full instructions:** See [DEPLOYMENT.md](./DEPLOYMENT.md#caprover-deployment)
-
-## 🔄 Azure DevOps Integration
-
-Azure DevOps provides CI/CD pipelines and source control.
-
-### Files Required (Already Created ✅)
-- `azure-pipelines.yml` - CI/CD pipeline configuration
-
-### Quick Steps:
-1. Create Azure DevOps project
-2. Push code to Azure DevOps repository
-3. Create pipeline using `azure-pipelines.yml`
-4. (Optional) Configure Docker registry for container builds
-
-**Full instructions:** See [DEPLOYMENT.md](./DEPLOYMENT.md#azure-devops-setup)
 
 ## 📝 Key Configuration
 

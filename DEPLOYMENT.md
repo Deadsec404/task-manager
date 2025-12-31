@@ -5,9 +5,8 @@ This guide covers deploying the Task Management application to CapRover and sett
 ## Table of Contents
 
 1. [CapRover Deployment](#caprover-deployment)
-2. [Azure DevOps Setup](#azure-devops-setup)
-3. [Environment Variables](#environment-variables)
-4. [Troubleshooting](#troubleshooting)
+2. [Environment Variables](#environment-variables)
+3. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -19,7 +18,7 @@ CapRover is a self-hosted PaaS that makes it easy to deploy applications using D
 
 - CapRover instance running and accessible
 - Domain name configured with CapRover
-- Git repository with your code (GitHub, GitLab, Bitbucket, or Azure DevOps)
+- Git repository with your code (GitHub, GitLab, or Bitbucket)
 
 ### Step 1: Prepare Your Repository
 
@@ -42,50 +41,15 @@ Make sure your repository contains:
 
 3. **Connect Your Repository**
 
-   **⚠️ IMPORTANT: Azure DevOps Limitation**
-   
-   CapRover's Method 1 doesn't support Azure DevOps directly (it will show error: "Missing required Github/BitBucket/Gitlab field"). 
-   
-   **Recommended Solution: Use GitHub (Method 2) - Easiest!** ⭐
-   
-   **Option A: Use GitHub (Recommended - Simplest)**
-   
-   1. **Create GitHub repository:**
-      - Go to https://github.com and create a new repository
-      - Push your code: `git remote add github https://github.com/your-username/repo.git && git push -u github main`
-   
-   2. **In CapRover, use Method 2:**
-      - Go to "Deployment" tab
-      - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
-      - Click "Connect Repository"
-      - Authenticate with GitHub
-      - Select your repository and branch (`main`)
-      - Click "Connect"
-   
-   **See [GITHUB_DEPLOYMENT.md](./GITHUB_DEPLOYMENT.md) for complete GitHub setup guide.**
-   
-   **Option B: Use Docker Registry (Method 3)**
-   
-   1. **Build and push Docker image from Azure DevOps:**
-      - Update your `azure-pipelines.yml` to build and push Docker image
-      - Push to Azure Container Registry (ACR) or Docker Hub
-   
-   2. **In CapRover, use Method 3:**
-      - Go to "Deployment" tab
-      - Select "Method 3: Deploy using a Docker image from a registry"
-      - Enter your Docker image URL (e.g., `youracr.azurecr.io/task-management:latest`)
-      - Add registry credentials
-      - Click "Save & Update"
-   
-   **See [QUICK_FIX_AZURE_DEVOPS.md](./QUICK_FIX_AZURE_DEVOPS.md) for Docker Registry setup.**
-   
-   **For GitHub/Bitbucket/GitLab (Alternative):**
+   **For GitHub/Bitbucket/GitLab:**
    - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
    - Click "Connect Repository"
    - Authenticate with your Git provider
    - Select your repository
    - Choose branch: `main` (or your default branch)
    - Click "Connect"
+   
+   **See [GITHUB_DEPLOYMENT.md](./GITHUB_DEPLOYMENT.md) for detailed GitHub setup guide.**
 
 ### Step 3: Configure Environment Variables
 
@@ -150,103 +114,6 @@ npm run seed
 
 Once deployed, access your application at:
 - `https://your-app-name.captain.yourdomain.com`
-
----
-
-## Azure DevOps Setup
-
-Azure DevOps provides CI/CD pipelines, source control, and project management.
-
-### Step 1: Create Azure DevOps Project
-
-1. **Go to Azure DevOps**
-   - Navigate to [https://dev.azure.com](https://dev.azure.com)
-   - Login with your Microsoft account
-
-2. **Create Organization (if needed)**
-   - If you don't have an organization, create one
-   - Choose a name and region
-
-3. **Create New Project**
-   - Click "New Project"
-   - Enter project name: `Task-Management`
-   - Choose visibility (Private or Public)
-   - Select Version control: Git
-   - Select Work item process: Basic (or your preference)
-   - Click "Create"
-
-### Step 2: Push Your Code to Azure DevOps
-
-#### Option A: Import Existing Repository
-
-1. In your Azure DevOps project, go to "Repos" > "Files"
-2. Click "Import"
-3. Enter your repository URL (GitHub, GitLab, etc.)
-4. Click "Import"
-
-#### Option B: Push Using Git (Recommended)
-
-1. **Get Repository URL**
-   - In Azure DevOps project, go to "Repos" > "Files"
-   - Click "Clone" and copy the repository URL
-
-2. **Initialize Git and Push (if not already a git repo)**
-   ```bash
-   git init
-   git remote add origin <your-azure-devops-repo-url>
-   git add .
-   git commit -m "Initial commit"
-   git push -u origin main
-   ```
-
-3. **Or if already a git repo**
-   ```bash
-   git remote set-url origin <your-azure-devops-repo-url>
-   git push -u origin main
-   ```
-
-### Step 3: Create Pipeline
-
-1. **Navigate to Pipelines**
-   - In your Azure DevOps project, click "Pipelines" > "Pipelines"
-
-2. **Create New Pipeline**
-   - Click "Create Pipeline"
-   - Select "Azure Repos Git" (or your source)
-   - Select your repository
-   - Choose "Existing Azure Pipelines YAML file"
-   - Select branch: `main`
-   - Select path: `/azure-pipelines.yml`
-   - Click "Continue" and then "Run"
-
-3. **Configure Pipeline Variables (Optional)**
-   - In Pipeline settings, go to "Variables"
-   - Add any sensitive variables (e.g., `JWT_SECRET`)
-   - Mark them as "Secret" if sensitive
-
-### Step 4: Customize Pipeline
-
-The `azure-pipelines.yml` file is already configured for:
-- ✅ Building frontend
-- ✅ Building backend
-- ✅ Running lint checks
-- ✅ Building Docker image (commented out - enable after configuring Docker registry)
-
-**To Enable Docker Build:**
-1. Create a Docker registry service connection:
-   - Go to "Project Settings" > "Service connections"
-   - Create new connection for Docker Hub or Azure Container Registry
-2. Update `azure-pipelines.yml`:
-   - Change `containerRegistry` to your service connection name
-   - Change `repository` to your Docker repository name
-   - Set `condition: true` for the Docker stage
-
-### Step 5: Configure Branch Policies (Optional)
-
-1. Go to "Repos" > "Branches"
-2. Click on `main` branch > "Branch policies"
-3. Enable "Require a minimum number of reviewers"
-4. Enable "Build validation" and select your pipeline
 
 ---
 
@@ -362,22 +229,6 @@ PostgreSQL is recommended for production deployments as it provides better perfo
 - Verify `FRONTEND_URL` matches your actual app URL
 - Check that URL doesn't have trailing slash
 
-### Azure DevOps Issues
-
-**Pipeline Fails:**
-- Check pipeline logs for specific error
-- Verify `azure-pipelines.yml` syntax
-- Ensure Node.js version is available
-
-**Build Artifacts Not Found:**
-- Verify build steps completed successfully
-- Check artifact publish paths
-
-**Docker Build Fails:**
-- Verify Docker registry service connection
-- Check Dockerfile path is correct
-- Ensure repository name is correct
-
 ### General Issues
 
 **Cannot Access Application:**
@@ -400,7 +251,6 @@ PostgreSQL is recommended for production deployments as it provides better perfo
 ## Additional Resources
 
 - [CapRover Documentation](https://caprover.com/docs/)
-- [Azure DevOps Documentation](https://docs.microsoft.com/en-us/azure/devops/)
 - [Prisma Documentation](https://www.prisma.io/docs/)
 - [Docker Documentation](https://docs.docker.com/)
 
@@ -410,7 +260,7 @@ PostgreSQL is recommended for production deployments as it provides better perfo
 
 For deployment issues, check:
 1. Application logs in CapRover
-2. Build logs in Azure DevOps
+2. Build logs in CapRover deployment tab
 3. Container logs: `docker logs <container-id>`
 
 If problems persist, review the application's local setup documentation and ensure all prerequisites are met.
