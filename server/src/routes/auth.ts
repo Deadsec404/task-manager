@@ -10,6 +10,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 // Rate limiting for auth routes (more lenient in development)
+// Note: Express must have trust proxy enabled (set in index.ts) for this to work behind CapRover/NGINX
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'production' ? 5 : 100, // 5 in production, 100 in development
