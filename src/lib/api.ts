@@ -48,8 +48,11 @@ class ApiClient {
       }
       
       // Provide more specific error messages
-      if (response.status === 0 || response.status === 500) {
-        errorMessage = 'Server connection failed. Please make sure the backend server is running on port 3001.';
+      if (response.status === 0) {
+        errorMessage = 'Server connection failed. Please check your internet connection and try again.';
+      } else if (response.status === 500) {
+        // For 500 errors, use the actual error message from the server if available
+        // Don't override with a generic message
       } else if (response.status === 401) {
         errorMessage = errorMessage || 'Invalid email or password';
       } else if (response.status === 403) {
