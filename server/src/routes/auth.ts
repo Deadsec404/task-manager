@@ -1,7 +1,7 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { registerSchema, loginSchema } from '../utils/validation.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
@@ -55,10 +55,11 @@ router.post('/register', authLimiter, async (req, res) => {
 
     // Generate token
     const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
+    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn } as SignOptions
     );
 
     res.status(201).json({
@@ -105,10 +106,11 @@ router.post('/login', authLimiter, async (req, res) => {
 
     // Generate token
     const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
+    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn } as SignOptions
     );
 
     // Create session (optional - don't fail login if this fails)
