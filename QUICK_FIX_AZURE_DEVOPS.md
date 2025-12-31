@@ -3,7 +3,11 @@
 ## The Problem
 CapRover Method 1 doesn't support Azure DevOps → Error: "Missing required Github/BitBucket/Gitlab field"
 
-## The Solution: Use Docker Registry (Method 3)
+## ⭐ Recommended Solution: Use GitHub (Method 2) - Easiest!
+
+**If you can use GitHub, it's much simpler!** See [GITHUB_DEPLOYMENT.md](./GITHUB_DEPLOYMENT.md)
+
+## Alternative Solution: Use Docker Registry (Method 3)
 
 ### Step 1: Set Up Docker Hub (Easiest) or Azure Container Registry
 

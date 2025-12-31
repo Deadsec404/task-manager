@@ -46,12 +46,29 @@ Make sure your repository contains:
    
    CapRover's Method 1 doesn't support Azure DevOps directly (it will show error: "Missing required Github/BitBucket/Gitlab field"). 
    
-   **Recommended Solution: Use Docker Registry (Method 3)**
+   **Recommended Solution: Use GitHub (Method 2) - Easiest!** ⭐
+   
+   **Option A: Use GitHub (Recommended - Simplest)**
+   
+   1. **Create GitHub repository:**
+      - Go to https://github.com and create a new repository
+      - Push your code: `git remote add github https://github.com/your-username/repo.git && git push -u github main`
+   
+   2. **In CapRover, use Method 2:**
+      - Go to "Deployment" tab
+      - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
+      - Click "Connect Repository"
+      - Authenticate with GitHub
+      - Select your repository and branch (`main`)
+      - Click "Connect"
+   
+   **See [GITHUB_DEPLOYMENT.md](./GITHUB_DEPLOYMENT.md) for complete GitHub setup guide.**
+   
+   **Option B: Use Docker Registry (Method 3)**
    
    1. **Build and push Docker image from Azure DevOps:**
       - Update your `azure-pipelines.yml` to build and push Docker image
       - Push to Azure Container Registry (ACR) or Docker Hub
-      - See [CAPROVER_AZURE_DEVOPS_SOLUTION.md](./CAPROVER_AZURE_DEVOPS_SOLUTION.md) for detailed setup
    
    2. **In CapRover, use Method 3:**
       - Go to "Deployment" tab
@@ -60,10 +77,7 @@ Make sure your repository contains:
       - Add registry credentials
       - Click "Save & Update"
    
-   **Alternative Solutions:**
-   - Use CapRover CLI for manual deployments
-   - Set up GitHub mirror and use Method 2
-   - See [CAPROVER_AZURE_DEVOPS_SOLUTION.md](./CAPROVER_AZURE_DEVOPS_SOLUTION.md) for all options
+   **See [QUICK_FIX_AZURE_DEVOPS.md](./QUICK_FIX_AZURE_DEVOPS.md) for Docker Registry setup.**
    
    **For GitHub/Bitbucket/GitLab (Alternative):**
    - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
