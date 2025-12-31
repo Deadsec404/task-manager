@@ -119,5 +119,5 @@ stages:
                 $(Build.BuildId)
                 latest
             displayName: 'Build and Push Docker Image'
-            condition: false # Set to true after configuring Docker registry
+            condition: true # Set to true to enable Docker build and push
 

@@ -42,31 +42,28 @@ Make sure your repository contains:
 
 3. **Connect Your Repository**
 
-   **For Azure DevOps:**
-   - In your app settings, go to "Deployment" tab
-   - Select "Method 1: Deploy from a GitHub/Bitbucket/GitLab repository or a self-hosted git server"
-   - Enter your Azure DevOps repository URL in the format:
-     ```
-     https://[PAT]@dev.azure.com/[organization]/[project]/_git/[repository]
-     ```
-   - Example:
-     ```
-     https://[PAT]@dev.azure.com/TechMorpho/Task-Managemnet-System/_git/Task-Managemnet-System
-     ```
-   - Replace `[PAT]` with a Personal Access Token (PAT) from Azure DevOps
-   - Choose branch: `main` (or your default branch)
-   - Click "Connect"
+   **⚠️ IMPORTANT: Azure DevOps Limitation**
    
-   **Creating a Personal Access Token (PAT) in Azure DevOps:**
-   1. Go to Azure DevOps: https://dev.azure.com
-   2. Click on your profile icon (top right) → "Personal access tokens"
-   3. Click "New Token"
-   4. Set name: "CapRover Deployment"
-   5. Set expiration (recommended: 90 days or custom)
-   6. Select scope: "Code (read)" - this is sufficient for deployment
-   7. Click "Create"
-   8. Copy the token immediately (you won't see it again)
-   9. Use this token in the repository URL above
+   CapRover's Method 1 doesn't support Azure DevOps directly (it will show error: "Missing required Github/BitBucket/Gitlab field"). 
+   
+   **Recommended Solution: Use Docker Registry (Method 3)**
+   
+   1. **Build and push Docker image from Azure DevOps:**
+      - Update your `azure-pipelines.yml` to build and push Docker image
+      - Push to Azure Container Registry (ACR) or Docker Hub
+      - See [CAPROVER_AZURE_DEVOPS_SOLUTION.md](./CAPROVER_AZURE_DEVOPS_SOLUTION.md) for detailed setup
+   
+   2. **In CapRover, use Method 3:**
+      - Go to "Deployment" tab
+      - Select "Method 3: Deploy using a Docker image from a registry"
+      - Enter your Docker image URL (e.g., `youracr.azurecr.io/task-management:latest`)
+      - Add registry credentials
+      - Click "Save & Update"
+   
+   **Alternative Solutions:**
+   - Use CapRover CLI for manual deployments
+   - Set up GitHub mirror and use Method 2
+   - See [CAPROVER_AZURE_DEVOPS_SOLUTION.md](./CAPROVER_AZURE_DEVOPS_SOLUTION.md) for all options
    
    **For GitHub/Bitbucket/GitLab (Alternative):**
    - Select "Method 2: Deploy from GitHub/Bitbucket/GitLab"
