@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide covers deploying the Task Management application to CapRover and setting up Azure DevOps.
+This guide covers deploying the Task Management application to CapRover.
 
 ## Table of Contents
 
