@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite doesn't support enums, using String with @default
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String?
+  role          String   @default("USER") // USER, ADMIN, SUPER_ADMIN
+  preferredCurrency String @default("USD") // User's preferred currency for display
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workspaces Workspace[]
+  sessions   Session[]
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks    Task[]
+  expenses Expense[]
+  habits   Habit[]
+  budgets  Budget[]
+
+  @@index([userId])
+}
+
+model Task {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  category        String   @default("Personal")
+  priority        String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  status          String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, COMPLETED, OVERDUE
+  dueDate         DateTime?
+  expectedTime    Int? // in minutes
+  actualTimeSpent Int      @default(0) // in minutes
+  tags            String   @default("[]") // JSON array as string for SQLite
+  workspaceId     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  completedAt     DateTime?
+
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  timeEntries TimeEntry[]
+  repeats     TaskRepeat?
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model TaskRepeat {
+  id          String   @id @default(cuid())
+  taskId      String   @unique
+  frequency   String // "daily", "weekly", "monthly"
+  interval    Int      @default(1)
+  endDate     DateTime?
+  lastCreated DateTime?
+  createdAt   DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model TimeEntry {
+  id          String   @id @default(cuid())
+  taskId      String
+  startTime   DateTime
+  endTime     DateTime?
+  duration    Int? // in minutes
+  description String?
+  createdAt   DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
+
+model Expense {
+  id            String   @id @default(cuid())
+  amount        Float
+  currency      String   @default("USD") // USD, EUR, GBP, INR, etc.
+  category      String   // PERSONAL, BUSINESS, CUSTOM
+  subCategory   String?
+  paymentMethod String   // CASH, CARD, UPI, BANK_TRANSFER
+  date          DateTime @default(now())
+  notes         String?
+  workspaceId   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([date])
+  @@index([category])
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  workspaceId String
+  category    String   // PERSONAL, BUSINESS, CUSTOM
+  subCategory String?
+  amount      Float
+  period      String   @default("monthly") // "monthly", "weekly", "yearly"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, category, subCategory, period])
+  @@index([workspaceId])
+}
+
+model Habit {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  frequency   String   @default("DAILY") // DAILY, WEEKLY, MONTHLY
+  workspaceId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  entries   HabitEntry[]
+
+  @@index([workspaceId])
+}
+
+model HabitEntry {
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime @default(now())
+  completed Boolean  @default(false)
+  notes     String?
+  createdAt DateTime @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@index([habitId])
+  @@index([date])
+}
+

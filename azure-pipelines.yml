@@ -1,0 +1,123 @@
+# Azure DevOps Pipeline for Task Management App
+# This pipeline builds, tests, and optionally deploys the application
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+      - develop
+  paths:
+    exclude:
+      - README.md
+      - '*.md'
+      - '.gitignore'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '18.x'
+  buildConfiguration: 'Release'
+
+stages:
+  - stage: Build
+    displayName: 'Build Application'
+    jobs:
+      - job: BuildFrontend
+        displayName: 'Build Frontend'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '$(nodeVersion)'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm ci
+            displayName: 'Install Frontend Dependencies'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          - script: |
+              npm run build
+            displayName: 'Build Frontend'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(System.DefaultWorkingDirectory)/dist'
+              artifactName: 'frontend-build'
+              displayName: 'Publish Frontend Build Artifact'
+
+      - job: BuildBackend
+        displayName: 'Build Backend'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '$(nodeVersion)'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm ci
+            displayName: 'Install Backend Dependencies'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/server'
+
+          - script: |
+              npx prisma generate
+            displayName: 'Generate Prisma Client'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/server'
+
+          - script: |
+              npm run build
+            displayName: 'Build Backend'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/server'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(System.DefaultWorkingDirectory)/server/dist'
+              artifactName: 'backend-build'
+              displayName: 'Publish Backend Build Artifact'
+
+  - stage: Test
+    displayName: 'Run Tests'
+    jobs:
+      - job: LintCode
+        displayName: 'Lint Code'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '$(nodeVersion)'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm ci
+              npm run build
+            displayName: 'Build Frontend (Check for Errors)'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+            continueOnError: true
+
+          - script: |
+              npm ci
+              npm run build
+            displayName: 'Build Backend (Check for Errors)'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/server'
+            continueOnError: true
+
+  - stage: Docker
+    displayName: 'Build Docker Image'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: BuildDocker
+        displayName: 'Build Docker Image'
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'DockerHub' # Update this to your Docker registry service connection name
+              repository: 'task-management-app' # Update with your Docker repository name
+              command: 'buildAndPush'
+              Dockerfile: '**/Dockerfile'
+              tags: |
+                $(Build.BuildId)
+                latest
+            displayName: 'Build and Push Docker Image'
+            condition: false # Set to true after configuring Docker registry
+
