@@ -40,14 +40,31 @@ function validateEnv(): EnvConfig {
   }
 
   // DATABASE_URL - CRITICAL: Must be valid PostgreSQL URL
-  const DATABASE_URL = process.env.DATABASE_URL;
-  if (!DATABASE_URL) {
-    errors.push('DATABASE_URL is required but not set');
+  let DATABASE_URL = process.env.DATABASE_URL;
+  
+  // Debug: Log all env vars starting with DATABASE (for troubleshooting)
+  if (process.env.DEBUG_ENV) {
+    console.log('DEBUG: All DATABASE-related env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE')));
+  }
+  
+  // Handle case where user might have included "DATABASE_URL=" in the value
+  if (DATABASE_URL && DATABASE_URL.startsWith('DATABASE_URL=')) {
+    DATABASE_URL = DATABASE_URL.replace(/^DATABASE_URL=/, '');
+  }
+  
+  if (!DATABASE_URL || DATABASE_URL.trim() === '') {
+    errors.push(
+      'DATABASE_URL is required but not set. ' +
+      'Please set it in CapRover: App Configs → Environment Variables → DATABASE_URL ' +
+      'Value format: postgresql://postgres:password@srv-captain--postgres:5432/postgres'
+    );
   } else if (!DATABASE_URL.startsWith('postgresql://') && !DATABASE_URL.startsWith('postgres://')) {
-    const preview = DATABASE_URL.length > 50 ? DATABASE_URL.substring(0, 50) + '...' : DATABASE_URL;
+    const preview = DATABASE_URL.length > 80 ? DATABASE_URL.substring(0, 80) + '...' : DATABASE_URL;
     errors.push(
       `DATABASE_URL must start with 'postgresql://' or 'postgres://'. ` +
-      `Current value: ${preview}`
+      `Current value (first 80 chars): ${preview} ` +
+      `\nPlease check CapRover App Configs → Environment Variables → DATABASE_URL ` +
+      `\nExpected format: postgresql://postgres:password@srv-captain--postgres:5432/postgres`
     );
   }
 
