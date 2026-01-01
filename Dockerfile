@@ -81,6 +81,6 @@ EXPOSE 80
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the server
-CMD ["node", "dist/index.js"]
+# Start the server (runs migrations first, then starts server)
+CMD ["npm", "start"]
 

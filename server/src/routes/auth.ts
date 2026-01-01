@@ -135,10 +135,19 @@ router.post('/login', authLimiter, async (req, res) => {
       token
     });
   } catch (error: any) {
+    // Log error for debugging
+    console.error('Login error:', error);
+    
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: error.errors[0].message });
     }
-    res.status(500).json({ error: 'Failed to login' });
+    
+    // Provide more details in development
+    const errorMessage = process.env.NODE_ENV === 'production' 
+      ? 'Failed to login' 
+      : `Failed to login: ${error.message || error.toString()}`;
+    
+    res.status(500).json({ error: errorMessage });
   }
 });
 
