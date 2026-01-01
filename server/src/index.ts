@@ -1,6 +1,15 @@
+/**
+ * Server Entry Point
+ * 
+ * IMPORTANT: Environment validation MUST happen before any imports that use Prisma.
+ * The config/env module validates DATABASE_URL before Prisma Client is initialized.
+ */
+
+// Validate environment variables FIRST (before Prisma imports)
+import { PORT, FRONTEND_URL } from './config/env.js';
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { authRoutes } from './routes/auth.js';
@@ -13,10 +22,7 @@ import { reportRoutes } from './routes/reports.js';
 import { adminRoutes } from './routes/admin.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Trust proxy - required when behind reverse proxy (CapRover/NGINX)
 app.set('trust proxy', 1);
@@ -26,8 +32,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? [process.env.FRONTEND_URL] 
+const allowedOrigins = FRONTEND_URL 
+  ? [FRONTEND_URL] 
   : ['http://localhost:5173', 'http://localhost:5174'];
 
 app.use(cors({

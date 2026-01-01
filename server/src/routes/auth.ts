@@ -5,6 +5,7 @@ import jwt, { SignOptions } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { registerSchema, loginSchema } from '../utils/validation.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } from '../config/env.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -13,7 +14,7 @@ const prisma = new PrismaClient();
 // Note: Express must have trust proxy enabled (set in index.ts) for this to work behind CapRover/NGINX
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 5 : 100, // 5 in production, 100 in development
+  max: NODE_ENV === 'production' ? 5 : 100, // 5 in production, 100 in development
   message: 'Too many login attempts, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
@@ -55,12 +56,10 @@ router.post('/register', authLimiter, async (req, res) => {
     });
 
     // Generate token
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
     const token = jwt.sign(
       { userId: user.id, role: user.role },
-      jwtSecret,
-      { expiresIn } as SignOptions
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN } as SignOptions
     );
 
     res.status(201).json({
@@ -106,12 +105,10 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 
     // Generate token
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
     const token = jwt.sign(
       { userId: user.id, role: user.role },
-      jwtSecret,
-      { expiresIn } as SignOptions
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN } as SignOptions
     );
 
     // Create session (optional - don't fail login if this fails)

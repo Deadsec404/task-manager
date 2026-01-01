@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import { JWT_SECRET } from '../config/env.js';
 
 const prisma = new PrismaClient();
 
@@ -21,8 +22,7 @@ export const authenticate = async (
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
-    const decoded = jwt.verify(token, jwtSecret) as { userId: string; role: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; role: string };
     
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
