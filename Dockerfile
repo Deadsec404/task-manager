@@ -54,11 +54,12 @@ RUN apk add --no-cache dumb-init openssl libc6-compat
 COPY server/package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+# Skip postinstall script (prisma generate) since Prisma CLI is not in production deps
+# We copy the generated Prisma Client from builder stage instead
+RUN npm ci --only=production --ignore-scripts
 
 # Copy built backend from builder
 COPY --from=backend-builder /app/dist ./dist
-COPY --from=backend-builder /app/prisma ./prisma
 COPY --from=backend-builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=backend-builder /app/node_modules/@prisma ./node_modules/@prisma
 
