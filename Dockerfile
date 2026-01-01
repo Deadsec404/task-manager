@@ -63,6 +63,7 @@ RUN npm ci --only=production --ignore-scripts
 COPY --from=backend-builder /app/dist ./dist
 COPY --from=backend-builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=backend-builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=backend-builder /app/prisma ./prisma
 
 # Copy built frontend
 COPY --from=frontend-builder /app/dist ./public
