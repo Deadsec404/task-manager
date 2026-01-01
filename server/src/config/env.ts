@@ -44,9 +44,10 @@ function validateEnv(): EnvConfig {
   if (!DATABASE_URL) {
     errors.push('DATABASE_URL is required but not set');
   } else if (!DATABASE_URL.startsWith('postgresql://') && !DATABASE_URL.startsWith('postgres://')) {
+    const preview = DATABASE_URL.length > 50 ? DATABASE_URL.substring(0, 50) + '...' : DATABASE_URL;
     errors.push(
       `DATABASE_URL must start with 'postgresql://' or 'postgres://'. ` +
-      `Current value: ${DATABASE_URL.substring(0, 20)}...`
+      `Current value: ${preview}`
     );
   }
 

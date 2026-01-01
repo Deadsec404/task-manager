@@ -73,7 +73,7 @@ RUN mkdir -p /app/data
 # Set environment variables (can be overridden in CapRover)
 ENV NODE_ENV=production
 ENV PORT=80
-ENV DATABASE_URL="file:./data/production.db"
+# DATABASE_URL must be set in CapRover environment variables (PostgreSQL format: postgresql://...)
 
 # Expose port
 EXPOSE 80
