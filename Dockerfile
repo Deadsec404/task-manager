@@ -58,7 +58,6 @@ COPY server/package*.json ./
 # Skip postinstall script (prisma generate) since Prisma CLI is not in production deps
 # We copy the generated Prisma Client from builder stage instead
 RUN npm ci --only=production --ignore-scripts
-RUN npm install -g tsx
 
 # Copy built backend from builder
 COPY --from=backend-builder /app/dist ./dist
