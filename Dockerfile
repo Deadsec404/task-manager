@@ -83,5 +83,6 @@ EXPOSE 80
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the server (runs migrations first, then starts server)
+RUN rm -rf /app/prisma/migrations/20251230070613_npm_run_seed /app/prisma/migrations/20251230083648_* 2>/dev/null || true
 CMD ["npm", "start"]
 
