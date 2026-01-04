@@ -66,8 +66,11 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static files from public directory (frontend build)
+// Only in production - in development, frontend runs separately
 const publicPath = path.join(__dirname, '../public');
-app.use(express.static(publicPath));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(publicPath));
+}
 
 // API routes must be before the catch-all route
 // Root route - serve frontend for non-API routes
@@ -96,9 +99,27 @@ app.get('/', (req, res) => {
 
 // Catch-all handler: send back React's index.html file for client-side routing
 app.get('*', (req, res) => {
-  // Only serve index.html for non-API routes
+  // Only serve index.html for non-API routes in production
   if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(publicPath, 'index.html'));
+    if (process.env.NODE_ENV === 'production') {
+      res.sendFile(path.join(publicPath, 'index.html'));
+    } else {
+      // In development, frontend runs separately on port 5173
+      res.status(404).json({ 
+        error: 'Route not found',
+        message: 'This is the API server. In development, access the frontend at http://localhost:5173',
+        apiEndpoints: {
+          health: '/api/health',
+          auth: '/api/auth',
+          workspaces: '/api/workspaces',
+          tasks: '/api/tasks',
+          expenses: '/api/expenses',
+          dashboard: '/api/dashboard',
+          habits: '/api/habits',
+          reports: '/api/reports'
+        }
+      });
+    }
   } else {
     res.status(404).json({ error: 'Route not found' });
   }
