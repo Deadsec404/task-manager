@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 // Note: Express must have trust proxy enabled (set in index.ts) for this to work behind CapRover/NGINX
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: NODE_ENV === 'production' ? 5 : 100, // 5 in production, 100 in development
+  max: NODE_ENV === 'production' ? 15 : 100, // 5 in production, 100 in development
   message: 'Too many login attempts, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
