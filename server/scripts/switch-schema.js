@@ -6,8 +6,13 @@
  *   node scripts/switch-schema.js postgresql - Switch to PostgreSQL (production)
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES module way to get __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const schemaDir = path.join(__dirname, '..', 'prisma');
 const mainSchema = path.join(schemaDir, 'schema.prisma');
@@ -45,4 +50,3 @@ try {
   console.error('❌ Error switching schema:', error.message);
   process.exit(1);
 }
-

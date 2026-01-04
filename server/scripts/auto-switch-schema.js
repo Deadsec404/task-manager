@@ -3,8 +3,14 @@
  * This script detects SQLite (file:) vs PostgreSQL (postgresql://) and switches accordingly
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// ES module way to get __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const schemaDir = path.join(__dirname, '..', 'prisma');
 const mainSchema = path.join(schemaDir, 'schema.prisma');
@@ -12,7 +18,7 @@ const sqliteSchema = path.join(schemaDir, 'schema.sqlite.prisma');
 const postgresqlSchema = path.join(schemaDir, 'schema.postgresql.prisma');
 
 // Load .env file to check DATABASE_URL
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const databaseUrl = process.env.DATABASE_URL || '';
 
@@ -51,4 +57,3 @@ try {
   console.error('❌ Error switching schema:', error.message);
   process.exit(1);
 }
-
