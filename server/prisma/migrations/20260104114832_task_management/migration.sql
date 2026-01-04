@@ -5,6 +5,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "name" TEXT,
     "role" TEXT NOT NULL DEFAULT 'USER',
+    "preferredCurrency" TEXT NOT NULL DEFAULT 'USD',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -77,6 +78,7 @@ CREATE TABLE "TimeEntry" (
 CREATE TABLE "Expense" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "amount" REAL NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'USD',
     "category" TEXT NOT NULL,
     "subCategory" TEXT,
     "paymentMethod" TEXT NOT NULL,
