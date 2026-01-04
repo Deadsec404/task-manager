@@ -87,5 +87,4 @@ ENTRYPOINT ["dumb-init", "--"]
 
 # Start the server (runs migrations first, then starts server)
 RUN rm -rf /app/prisma/migrations/20251230070613_npm_run_seed /app/prisma/migrations/20251230083648_*  /app/prisma/migrations/20260104114832_task_management2>/dev/null || true
-CMD ["npm", "npm", "run", "start:no-migrate"]
-
+CMD ["npm", "run", "start:no-migrate"]
