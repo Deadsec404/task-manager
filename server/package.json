@@ -14,7 +14,8 @@
     "prisma:reset": "node scripts/auto-switch-schema.js && prisma migrate reset",
     "schema:sqlite": "node scripts/switch-schema.js sqlite",
     "schema:postgresql": "node scripts/switch-schema.js postgresql",
-    "seed": "node dist/scripts/seed.js"
+    "seed": "node dist/scripts/seed.js",
+    "promote:user": "node dist/scripts/promote-user.js"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
