@@ -33,6 +33,9 @@ COPY server/package*.json ./
 # Copy Prisma schema BEFORE npm ci (needed for postinstall script)
 COPY server/prisma ./prisma
 
+# Copy scripts BEFORE npm ci (needed for postinstall script)
+COPY server/scripts ./scripts
+
 # Install backend dependencies (postinstall will run prisma generate)
 RUN npm ci
 
