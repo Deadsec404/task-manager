@@ -1,17 +1,17 @@
-// PostgreSQL Prisma Schema
-// This schema is used for production with PostgreSQL
+// SQLite Prisma Schema
+// This schema is used for local development with SQLite
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// PostgreSQL supports arrays - tags field is String[]
+// SQLite doesn't support arrays, using String with JSON serialization for tags
 
 model User {
   id                String   @id @default(cuid())
@@ -69,7 +69,7 @@ model Task {
   dueDate         DateTime?
   expectedTime    Int? // in minutes
   actualTimeSpent Int      @default(0) // in minutes
-  tags            String[] @default([]) // Array in PostgreSQL
+  tags            String   @default("[]") // JSON array as string in SQLite
   workspaceId     String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -175,3 +175,4 @@ model HabitEntry {
   @@index([habitId])
   @@index([date])
 }
+
