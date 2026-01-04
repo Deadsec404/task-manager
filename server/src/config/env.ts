@@ -39,7 +39,7 @@ function validateEnv(): EnvConfig {
     errors.push('PORT must be a valid number between 1 and 65535');
   }
 
-  // DATABASE_URL - CRITICAL: Must be valid PostgreSQL URL
+  // DATABASE_URL - Must be valid PostgreSQL URL (production) or SQLite (development)
   let DATABASE_URL = process.env.DATABASE_URL;
   
   // Debug: Log all env vars starting with DATABASE (for troubleshooting)
@@ -55,18 +55,23 @@ function validateEnv(): EnvConfig {
   if (!DATABASE_URL || DATABASE_URL.trim() === '') {
     errors.push(
       'DATABASE_URL is required but not set. ' +
-      'Please set it in CapRover: App Configs → Environment Variables → DATABASE_URL ' +
-      'Value format: postgresql://postgres:password@srv-captain--postgres:5432/postgres'
+      (NODE_ENV === 'production' 
+        ? 'Please set it in CapRover: App Configs → Environment Variables → DATABASE_URL'
+        : 'Please set it in your .env file')
     );
-  } else if (!DATABASE_URL.startsWith('postgresql://') && !DATABASE_URL.startsWith('postgres://')) {
-    const preview = DATABASE_URL.length > 80 ? DATABASE_URL.substring(0, 80) + '...' : DATABASE_URL;
-    errors.push(
-      `DATABASE_URL must start with 'postgresql://' or 'postgres://'. ` +
-      `Current value (first 80 chars): ${preview} ` +
-      `\nPlease check CapRover App Configs → Environment Variables → DATABASE_URL ` +
-      `\nExpected format: postgresql://postgres:password@srv-captain--postgres:5432/postgres`
-    );
+  } else if (NODE_ENV === 'production') {
+    // In production, require PostgreSQL
+    if (!DATABASE_URL.startsWith('postgresql://') && !DATABASE_URL.startsWith('postgres://')) {
+      const preview = DATABASE_URL.length > 80 ? DATABASE_URL.substring(0, 80) + '...' : DATABASE_URL;
+      errors.push(
+        `DATABASE_URL must start with 'postgresql://' or 'postgres://' in production. ` +
+        `Current value (first 80 chars): ${preview} ` +
+        `\nPlease check CapRover App Configs → Environment Variables → DATABASE_URL ` +
+        `\nExpected format: postgresql://postgres:password@srv-captain--postgres:5432/postgres`
+      );
+    }
   }
+  // In development, allow SQLite (file:) or PostgreSQL
 
   // JWT_SECRET
   const JWT_SECRET = process.env.JWT_SECRET;
